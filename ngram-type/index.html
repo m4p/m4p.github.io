@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ngram Type</title>
+    <link rel="icon" type="image/x-icon" href="./favicon.ico">
+    <meta charset="UTF-8">
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+
+    <!-- jQuery required by Bootstrap. -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Darkly Bootstrap Theme! https://bootswatch.com/darkly/-->
+    <link rel="stylesheet" type="text/css" href="https://bootswatch.com/4/darkly/bootstrap.min.css">
+    <script src="https://bootswatch.com/4/_vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- Ngrams Sources. -->
+    <script src="./ngrams/bigrams.js"></script>
+    <script src="./ngrams/trigrams.js"></script>
+    <script src="./ngrams/tetragrams.js"></script>
+    <script src="./ngrams/pentagrams.js"></script>
+    <script src="./ngrams/words-50.js"></script>
+    <script src="./ngrams/words-200.js"></script>
+    <script src="./ngrams/words-200-fil.js"></script>
+    <script src="./ngrams/pangrams.js"></script>
+
+    <!-- VueJS -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+
+    <!-- Timer -->
+    <script src="./assets/js/moment.min.js"></script>
+    <script src="./assets/js/ez.countimer.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#input-typing').one('keyup', function() {
+                $('.timer').countimer({
+                    autoStart : true
+                });
+            });
+        });
+    </script>
+
+    <style>
+        body {
+            /* margin: 20px; */
+            /* overflow: hidden; */
+        }
+
+        #app {
+            height: 100vh;
+        }
+
+        .card-body {
+            margin-top: 20px;
+        }
+
+        .card-header {
+            background-color: #2D394D;
+        }
+
+        .card-header a,
+        .footer-links a {
+            color: #00BC8C;
+        }
+
+        .card-header a:hover,
+        .footer-links a:hover {
+            color: #FF7A90;
+            text-decoration: none;
+        }
+
+        legend.combination,
+        legend.repetition {
+            margin-bottom: 0;
+        }
+
+        .modal-dialog {
+            padding-top: 8%;
+        }
+
+        .expected-phrase,
+        input.form-control-lg {
+            max-width: 60rem;
+            margin: auto;
+            height: auto;
+        }
+
+        .center {
+            display: flex;
+            justify-content: center;
+        }
+
+        input.form-control-lg,
+        .word {
+            font-size: 32px;
+            height: 60px;
+            text-align: center;
+        }
+
+        .word.mb-3 {
+            height: auto;
+            margin-bottom: 0 !important;
+            padding: 10px;
+        }
+
+        .stats {
+            margin-top: -15px;
+        }
+
+        fieldset {
+            margin: -20px 30px 20px;
+        }
+
+        h4 {
+            margin-bottom: 40px;
+        }
+
+        .input-fields {
+            margin: auto
+            max-width: 60rem;
+            padding-bottom: 20px;
+            padding-top: 20px;
+        }
+
+        .input-practice-typing {
+            margin-top: -30px;
+        }
+
+        .form-group input::-webkit-input-placeholder {
+            transform: scale(0.50);
+        }
+
+        .form-group input:-ms-input-placeholder {
+            font-size: 20px;
+        }
+
+        .form-group input::-moz-placeholder {
+            font-size: 20px;
+        }
+
+        .form-control.incorrect-input {
+            background-color: #E7BBDC;
+        }
+
+        .sound-toggler-wrapper {
+            position: fixed;
+            top: 40px;
+            right: 50px;
+        }
+
+        .stats {
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        #timer-wrapper {
+            height: 40px;
+            margin-top: -10px;
+            margin-bottom: 76px;
+        }
+
+        .footer-links {
+            font-size: 12px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+
+        .footer-links a {
+            margin: 0 4px;
+        }
+
+        .footer-links .label {
+            display: inline-block;
+            margin-left: 2px;
+        }
+
+        /* .title-wrapper {
+            position: fixed;
+            bottom: 20px;
+            width: calc(100% - 42px);
+        } */
+    </style>
+</head>
+<body>
+    <div id="app" class="card">
+        <div class="card-body">
+            <div class="center">
+                <fieldset>
+                    <legend>Source</legend>
+                    <div class="form-group">
+                        <div class="custom-control custom-radio">
+                            <input v-model="data.source" type="radio" id="bi-grams" name="customRadio" class="custom-control-input" value="bigrams">
+                            <label class="custom-control-label" for="bi-grams">Top 50 Bigrams</label>
+                        </div>
+                        <div class="custom-control custom-radio">
+                            <input v-model="data.source" type="radio" id="tri-grams" name="customRadio" class="custom-control-input" value="trigrams">
+                            <label class="custom-control-label" for="tri-grams">Top 50 Trigrams</label>
+                        </div>
+                        <div class="custom-control custom-radio">
+                            <input v-model="data.source" type="radio" id="four-grams" name="customRadio" class="custom-control-input" value="tetragrams">
+                            <label class="custom-control-label" for="four-grams">Top 50 Tetragrams</label>
+                        </div>
+                        <div class="custom-control custom-radio">
+                            <input v-model="data.source" type="radio" id="words_200" name="customRadio" class="custom-control-input" value="words_200">
+                            <label class="custom-control-label" for="words_200">Top 200 English Words</label>
+                        </div>
+                        <div class="custom-control custom-radio">
+                            <input v-model="data.source" type="radio" id="custom_words" name="customRadio" class="custom-control-input" value="custom_words">
+                            <label class="custom-control-label" for="custom_words">Pangrams / </label>
+                            <a href="#" data-toggle="modal" data-target="#custom-words-modal" v-on:click="customWordsModalShow">Custom</a>
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend class="combination">Generator</legend>
+                    <div class="form-group">
+                        <label class="col-form-label col-form-label-sm">Combination</label>
+                        <input v-model.number="data[data['source']].combination" v-on:change="refreshPhrases"
+                            class="form-control form-control-sm" type="number" min="1"
+                        >
+                        <label class="col-form-label col-form-label-sm">Repetition</label>
+                        <input v-model.number="data[data['source']].repetition" v-on:change="refreshPhrases"
+                            class="form-control form-control-sm" type="number" min="1"
+                        >
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend class="repetition">Threshold</legend>
+                    <div class="form-group">
+                        <label class="col-form-label col-form-label-sm">WPM</label>
+                        <input v-model.number="data[data['source']].minimumWPM" v-on:change="save"
+                            class="form-control form-control-sm" type="number" min="1" max="500"
+                        >
+                        <label class="col-form-label col-form-label-sm">Accuracy</label>
+                        <input v-model.number="data[data['source']].minimumAccuracy"
+                            class="form-control form-control-sm" type="number" min="1" max="100" v-on:change="save"
+                        >
+                    </div>
+                </fieldset>
+            </div>
+
+            <!-- Modal for the custom texts. -->
+            <div id="custom-words-modal" class="modal fade" role="dialog">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        </div>
+                        <div class="modal-body">
+                            <p>Put the custom words here, separated by spaces/newlines.</p>
+                            <textarea id="custom-words-modal--text-area" rows="10" cols="94">
+                            </textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" v-on:click="customWordsModalSubmit">OK</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="center">
+                <h4>Lesson {{ data[data['source']].phrasesCurrentIndex + 1 }} / {{ data[data['source']].phrases.length }}</h4>
+            </div>
+            <div class="expected-phrase word text-white bg-primary mb-3">
+                {{ expectedPhrase }}
+            </div>
+            <div class="form-group input-fields">
+                <label class="col-form-label col-form-label-lg"></label>
+                <input v-model="typedPhrase" :class="{'form-control': true, 'form-control-lg': true, 'incorrect-input': !isInputCorrect}"
+                    id="input-typing" type="text" autocorrect="off" autocapitalize="none" placeholder="Re-type if failed, press <TAB> or <ESC> to reset" spellcheck="false" v-on:keyup="keyHandler"
+                >
+            </div>
+        </div>
+        <div class="center stats">
+            <h4>Raw WPM: {{ rawWPM }} </h4>
+            &nbsp; &nbsp; &nbsp; &nbsp; <h4>Accuracy: {{ accuracy }} % </h4>
+            &nbsp; &nbsp; &nbsp; &nbsp; <h4>Average WPM: {{ averageWPM }} </h4>
+        </div>
+
+        <div id="timer-wrapper" class="center">
+            <div class="timer well">
+            </div>
+        </div>
+        <h3 class="title-wrapper center card-header">
+            <a class="title" href="https://github.com/ranelpadon/ngram-type" target="_blank">
+                Ngram Type
+            <a>
+        </h3>
+        <h3 class="title-wrapper center footer-links">
+            <a class="title" href="https://github.com/ranelpadon/ngram-type/issues/new" target="_blank">
+                <i class="fa fa-lightbulb-o"></i>
+                <div class="label">
+                    Suggest Improvements
+                </div>
+            <a>
+            <a class="title" href="https://ko-fi.com/ranelpadon" target="_blank">
+                <i class="fa fa-coffee"></i>
+                <div class="label">
+                    Buy Me a Coffee
+                </div>
+            <a>
+        </h3>
+
+        <div class="form-group sound-toggler-wrapper">
+            <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" id="sound-toggler" v-model="data.soundEnabled">
+                <label class="custom-control-label" for="sound-toggler">Sound</label>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var ngramTypeConfig = {
+            el: '#app',
+            data: function() {
+                return {
+                    bigrams: bigrams,
+                    trigrams: trigrams,
+                    tetragrams: tetragrams,
+                    pentagrams: pentagrams,
+                    words_50: words_50,
+                    words_200: words_200,
+                    words_200_fil: words_200_fil,
+                    pangrams: pangrams,
+                    custom_words: null,
+
+                    data: {
+                        source: 'bigrams',
+                        soundEnabled: true,
+                        bigrams: {
+                            combination: 2,
+                            repetition: 3,
+                            minimumWPM: 40,
+                            minimumAccuracy: 100,
+                            WPMs: [],
+                            phrases: {},
+                            phrasesCurrentIndex: 0,
+                        },
+                        trigrams: {
+                            combination: 2,
+                            repetition: 3,
+                            minimumWPM: 40,
+                            minimumAccuracy: 100,
+                            WPMs: [],
+                            phrases: {},
+                            phrasesCurrentIndex: 0,
+                        },
+                        tetragrams: {
+                            combination: 2,
+                            repetition: 3,
+                            minimumWPM: 40,
+                            minimumAccuracy: 100,
+                            WPMs: [],
+                            phrases: {},
+                            phrasesCurrentIndex: 0,
+                        },
+                        pentagrams: {
+                            combination: 2,
+                            repetition: 3,
+                            minimumWPM: 40,
+                            minimumAccuracy: 100,
+                            WPMs: [],
+                            phrases: {},
+                            phrasesCurrentIndex: 0,
+                        },
+                        words_50: {
+                            combination: 2,
+                            repetition: 3,
+                            minimumWPM: 40,
+                            minimumAccuracy: 100,
+                            WPMs: [],
+                            phrases: {},
+                            phrasesCurrentIndex: 0,
+                        },
+                        words_200: {
+                            combination: 2,
+                            repetition: 3,
+                            minimumWPM: 40,
+                            minimumAccuracy: 100,
+                            WPMs: [],
+                            phrases: {},
+                            phrasesCurrentIndex: 0,
+                        },
+                        words_200_fil: {
+                            combination: 2,
+                            repetition: 3,
+                            minimumWPM: 40,
+                            minimumAccuracy: 100,
+                            WPMs: [],
+                            phrases: {},
+                            phrasesCurrentIndex: 0,
+                        },
+                        pangrams: {
+                            combination: 2,
+                            repetition: 3,
+                            minimumWPM: 40,
+                            minimumAccuracy: 100,
+                            WPMs: [],
+                            phrases: {},
+                            phrasesCurrentIndex: 0,
+                        },
+                        custom_words: {
+                            combination: 2,
+                            repetition: 3,
+                            minimumWPM: 40,
+                            minimumAccuracy: 100,
+                            WPMs: [],
+                            phrases: {},
+                            phrasesCurrentIndex: 0,
+                        },
+                    },
+
+                    phrases: [],
+                    expectedPhrase: '',
+                    typedPhrase: '',
+                    startTime: '',
+                    hitsCorrect: 0,
+                    hitsWrong: 0,
+                    isInputCorrect: true,
+                    rawWPM: 0,
+                    accuracy: 0,
+                }
+            },
+            computed: {
+                dataSource: function() {
+                    var defaultConfig = {
+                        combination: 2,
+                        repetition: 3,
+                        minimumWPM: 40,
+                        minimumAccuracy: 100,
+                        WPMs: [],
+                        phrases: {},
+                        phrasesCurrentIndex: 0,
+                    };
+                    var dataSource = this.data['source'];
+                    if (!this.data[dataSource]) {
+                        this.data[dataSource] = defaultConfig;
+                    }
+                    return this.data[dataSource];
+                },
+                WPMs: function() {
+                    var dataSource = this.dataSource;
+                    // For back-compatibility.
+                    if (!dataSource.WPMs) {
+                        dataSource.WPMs = [];
+                    }
+                    return dataSource.WPMs;
+                },
+                averageWPM: function() {
+                    var dataSource = this.dataSource;
+                    if ($.isEmptyObject(dataSource.WPMs)) {
+                        return 0;
+                    }
+
+                    var sum = dataSource.WPMs.reduce(function(a, b) { return (a + b) }, 0);
+                    var average = sum / dataSource.WPMs.length;
+                    return Math.round(average);
+                },
+            },
+            mounted: function() {
+                if (localStorage.ngramTypeAppdata != undefined) {
+                    this.load();
+                    var dataSource = this.dataSource;
+                    this.expectedPhrase = dataSource.phrases[dataSource.phrasesCurrentIndex];
+
+                    // Back-compatibility for those existing users
+                    // to avoid issues with the newly added Pentagrams (5-grams),
+                    // and the renaming of Quadgrams to Tetragrams:
+                    var defaultConfig = {
+                        combination: 2,
+                        repetition: 3,
+                        minimumWPM: 40,
+                        minimumAccuracy: 100,
+                        WPMs: [],
+                        phrases: {},
+                        phrasesCurrentIndex: 0,
+                    };
+                    if (!this.data.tetragrams) {
+                        this.data.tetragrams = this.data.quadgrams;
+                    }
+                    if (!this.data.pentagrams) {
+                        this.data.pentagrams = this.deepCopy(defaultConfig);
+                    }
+                    if (!this.data.words_200_fil) {
+                        this.data.words_200_fil = this.deepCopy(defaultConfig);
+                    }
+                    if (typeof(this.data.soundEnabled) == 'undefined') {
+                        this.data.soundEnabled = true;
+                    }
+                }
+
+                else {
+                    this.refreshPhrases();
+                }
+
+                // Use jQuery instead of Vue for intercepting the <TAB> key.
+                var that = this;
+                $('#input-typing').on('keydown', function(e) {
+                    if (e.originalEvent.code == 'Tab') {
+                        e.preventDefault();
+                        that.resetCurrentPhraseMetrics();
+                    }
+                });
+
+                this.correctLetterSound = new Audio('./media/click.mp3');
+                this.incorrectLetterSound = new Audio('./media/clack.mp3');
+                this.incorrectPhraseSound = new Audio('./media/failed.mp3');
+                this.correctPhraseSound = new Audio('./media/ding.wav');
+                this.currentPlayingSound = null;
+            },
+            watch: {
+                'data.source': function() {
+                    var dataSource = this.dataSource;
+                    if ($.isEmptyObject(dataSource.phrases)) {
+                        this.refreshPhrases();
+                    }
+
+                    else {
+                        this.expectedPhrase = dataSource.phrases[dataSource.phrasesCurrentIndex];
+                        // Save state in case of page reload.
+                        this.save();
+                    }
+
+                    this.resetCurrentPhraseMetrics();
+                },
+                'data.soundEnabled': function() {
+                    this.save();
+                },
+                custom_words: function() {
+                    this.refreshPhrases();
+                    // Save state in case of page reload.
+                    this.save();
+                    this.resetCurrentPhraseMetrics();
+                },
+                typedPhrase: function() {
+                    // Make sure to reset any error color when moving to next lesson,
+                    // lesson being reset, all chars being deleted, etc.
+                    if (!this.typedPhrase.length) {
+                        this.resetCurrentPhraseMetrics();
+                    }
+
+                    if (this.typedPhrase.length == 1) {
+                        this.startTime = new Date().getTime() / 1000;
+                    }
+                },
+                WPMs: function() {
+                    return this.averageWPM;
+                },
+            },
+            methods: {
+                save: function() {
+                    localStorage.ngramTypeAppdata = JSON.stringify(this.data);
+                },
+                load: function () {
+                    this.data = JSON.parse(localStorage.ngramTypeAppdata);
+                },
+                deepCopy: function(arrayOrObject) {
+                    var emptyArrayOrObject = $.isArray(arrayOrObject) ? [] : {};
+                    return $.extend(true, emptyArrayOrObject, arrayOrObject);
+                },
+                shuffle: function(array) {
+                    for (var i = array.length - 1; i > 0; i--) {
+                        var j = Math.floor(Math.random() * (i + 1));
+                        [array[i], array[j]] = [array[j], array[i]];
+                    }
+                },
+                stopCurrentPlayingSound: function() {
+                    // Sounds at the end of each phrase/lesson
+                    // dont need to be played from the beginning.
+                    if (
+                        this.currentPlayingSound == this.correctPhraseSound
+                        || this.currentPlayingSound == this.incorrectPhraseSound
+                    ) {
+                        return;
+                    }
+
+                    // Reset any playing sound to handle fast typing,
+                    // Otherwise, the sound will be intermittent and
+                    // not in sync with the key presses.
+                    if (this.currentPlayingSound) {
+                        this.currentPlayingSound.currentTime = 0;
+                    }
+
+                },
+                refreshPhrases: function() {
+                    var dataSource = this.dataSource;
+                    dataSource.phrases = this.generatePhrases(dataSource.combination, dataSource.repetition);
+                    this.expectedPhrase = dataSource.phrases[0];
+                    dataSource.phrasesCurrentIndex = 0;
+                    this.save();
+                },
+                generatePhrases: function(numberOfItemsToCombine, repetitions) {
+                    var dataSource = this.data['source'];
+                    if (dataSource === 'custom_words') {
+                        // User has set the custom words.
+                        if (this.custom_words) {
+                            dataSource = 'custom_words';
+                        }
+                        // Pangrams as default.
+                        else {
+                            dataSource = 'pangrams';
+                        }
+                    }
+                    var ngrams = this.deepCopy(this[dataSource]);
+                    this.shuffle(ngrams);
+                    var ngramsProcessed = 0;
+                    var phrases = [];
+
+                    while (ngrams.length) {
+                        var ngramsSublist = ngrams.slice(0, numberOfItemsToCombine);
+                        var subPhrase = ngramsSublist.join(' ');
+                        var _phrase = [];
+                        for (var i = 0; i < repetitions; i++) {
+                            _phrase.push(subPhrase);
+                        }
+                        phrases.push(_phrase.join(' '));
+                        // Remove the processed ngrams.
+                        ngrams.splice(0, numberOfItemsToCombine);
+                    }
+
+                    return phrases
+                },
+                keyHandler: function(e) {
+                    var key = e.key;
+
+                    if (key == 'Escape') {
+                        this.resetCurrentPhraseMetrics();
+                        return;
+                    }
+
+                    // For other miscellaneous keys.
+                    if (key.length > 1) {
+                        return;
+                    }
+
+                    var typedPhrase = this.typedPhrase.trimStart();
+                    if (!typedPhrase.length) {
+                        return;
+                    }
+
+                    if (this.expectedPhrase.startsWith(typedPhrase)) {
+                        if (this.data.soundEnabled) {
+                            this.stopCurrentPlayingSound();
+                            this.correctLetterSound.play();
+                            this.currentPlayingSound = this.correctLetterSound;
+                        }
+                        this.isInputCorrect = true;
+                        this.hitsCorrect += 1;
+                    }
+                    else {
+                        if (this.data.soundEnabled) {
+                            this.stopCurrentPlayingSound();
+                            this.incorrectLetterSound.play();
+                            this.currentPlayingSound = this.incorrectLetterSound;
+                        }
+                        this.isInputCorrect = false;
+                        this.hitsWrong += 1;
+                    }
+
+                    if (
+                        typedPhrase.length === this.expectedPhrase.length
+                        && typedPhrase === this.expectedPhrase
+                    ) {
+                        var currentTime = new Date().getTime() / 1000;
+                        this.rawWPM = Math.round(
+                            // 5 chars equals 1 word.
+                            ((this.hitsCorrect + this.hitsWrong) / 5) / (currentTime - this.startTime) * 60
+                        );
+
+                        this.accuracy = Math.round(
+                            this.hitsCorrect / (this.hitsCorrect + this.hitsWrong) * 100
+                        );
+
+                        var dataSource = this.dataSource;
+                        if (
+                            this.rawWPM < dataSource.minimumWPM
+                            || this.accuracy < dataSource.minimumAccuracy
+                        ) {
+                            if (this.data.soundEnabled) {
+                                this.stopCurrentPlayingSound();
+                                this.incorrectPhraseSound.play();
+                                this.currentPlayingSound = this.incorrectPhraseSound;
+                            }
+                            this.resetCurrentPhraseMetrics();
+                            return;
+                        }
+
+                        // For back-compatibility,
+                        // or when starting a new round in the same lesson.
+                        var newRoundStarted = (dataSource.phrasesCurrentIndex == 0);
+                        if (!dataSource.WPMs || newRoundStarted) {
+                            dataSource.WPMs = [];
+                        }
+                        dataSource.WPMs.push(this.rawWPM);
+
+                        if (this.data.soundEnabled) {
+                            this.stopCurrentPlayingSound();
+                            this.correctPhraseSound.play();
+                            this.currentPlayingSound = this.correctPhraseSound;
+                        }
+                        this.nextPhrase();
+                    }
+                },
+                resetCurrentPhraseMetrics: function() {
+                    this.hitsCorrect = 0;
+                    this.hitsWrong = 0;
+                    this.typedPhrase = '';
+                    this.isInputCorrect = true;
+                },
+                nextPhrase: function() {
+                    this.resetCurrentPhraseMetrics();
+                    var dataSource = this.dataSource;
+                    var nextPhraseExists = (dataSource.phrases.length > dataSource.phrasesCurrentIndex + 1);
+                    if (nextPhraseExists) {
+                        dataSource.phrasesCurrentIndex += 1;
+                        this.expectedPhrase = dataSource.phrases[dataSource.phrasesCurrentIndex];
+                        this.save();
+                    }
+                    // Start again from beginning, but generate new data.
+                    else {
+                        this.refreshPhrases();
+                    }
+                },
+                customWordsModalShow: function() {
+                    var $customWordsModal = $('#custom-words-modal');
+                    var customWords = (this.custom_words || this.pangrams).join('\n')
+                    $customWordsModal.find('textarea').val(customWords);
+                },
+                customWordsModalSubmit: function() {
+                    var $customWordsModal = $('#custom-words-modal');
+                    var customWordsSubmitted = $customWordsModal.find('textarea').val();
+                    // Convert to array, remove the empty string.
+                    var customWordsProccessed = customWordsSubmitted.split(/\s+/).filter(function(element) {return element});
+                    $customWordsModal.modal("hide");
+                    this.custom_words = customWordsProccessed;
+                },
+            },
+        };
+
+        var ngramTypeApp = new Vue(ngramTypeConfig);
+    </script>
+</body>
+</html>
