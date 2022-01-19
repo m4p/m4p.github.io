@@ -1,0 +1,281 @@
+<!doctype html5>
+
+<!--<html manifest="keyzen.manifest">-->
+<html>
+
+    <head>
+        <title>KeyZen Colemak-DH</title>
+        <script src="jquery.min.js"></script>
+        <script src="moment.min.js"></script>
+        <script src="keyzen.js"></script>
+        <script type="text/javascript" src="ez.countimer.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <meta charset="UTF-8">
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $('body').one('keyup', function() {
+                    $('.timer').countimer({
+                        autoStart : true
+                    });
+                });
+            });
+        </script>
+
+        <style>
+            @font-face {
+              font-family: 'Ubuntu Monokz';
+              font-style: normal;
+              font-weight: normal;
+              src: local('Ubuntu Monokz'), local('UbuntuMono-Regular'), url('ubuntu-mono.woff') format('woff');
+            }
+
+            body {
+                background-image: url('brushed_alu.png');
+                font-family: 'Ubuntu Monokz', sans-serif;
+                padding: 0; 
+                margin: 0;
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                -khtml-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+                line-height: initial;
+            }
+
+            #container {
+                position: relative;
+                width:100%;
+                height:100%;
+            }
+
+            #word {
+                color: #AAA;
+                position: absolute;
+                top: 30%;
+                margin-top: -64px;
+                height:128px;
+                font-size: 128px;
+                width:100%;
+                padding: 0px;
+                text-align: center;
+                margin-left: auto;
+                margin-right:auto;
+                word-wrap: break-word;
+            	text-shadow: 0px 2px 3px #000;
+            }
+            
+            .keys-hit {
+                color: #CCC;
+                font-size: 128px;
+            	text-shadow: none;
+            }
+            
+            #next-level {
+                height: 2px;
+                background-color: #f78d1d;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            #level-chars, #layout {
+                font-size: 16px;
+                width:95%;
+                text-align: center;
+                padding-top: 16px;
+                margin-left: auto;
+                margin-right: auto;
+                word-wrap: break-word;
+                font-weight: bold;
+                cursor: hand;
+                color: #AAAAAA;
+            }
+
+            .keyboard-layout {
+                width: 37%;
+                position: absolute;
+                bottom: 15%;
+                left: 0;
+                right: 0;
+                margin: auto;
+            }
+
+            .keyboard-layout img {
+                width: 100%;
+                margin: auto;
+                display: block;
+            }
+
+            #timer-wrapper {
+                color: #AAA;
+                font-family: 'Ubuntu Monokz', sans-serif;
+                text-align: center;
+                margin-left: auto;
+                margin-right:auto;
+                position: absolute;
+                bottom: 7%;
+                width: 100%;
+            }
+
+            #timer-wrapper .timer {
+                font-size: 30px;
+            }
+
+            #title {
+                color: #AAA;
+                position: absolute;
+                bottom: 18px;
+                text-align: center;
+                margin-left: auto;
+                margin-right:auto;
+                font-family: 'Ubuntu Monokz', sans-serif;
+                font-size: 18px;
+                font-weight: bold;
+                width:100%;
+            }
+
+            a {
+                color: #AAAAAA;
+                text-decoration: none;
+            }
+
+            a:hover {
+                color: #f78d1d;
+                text-decoration: underline;
+            }
+
+            #rigor {
+                font-size: 16px;
+                position: absolute;
+                right: 16px;
+                bottom: 16px;
+                color: #AAA;
+                font-weight: bold;
+                text-align: right;
+            }
+
+            #stats {
+                font-size: 16px;
+                position: absolute;
+                left: 16px;
+                bottom: 16px;
+                color: #AAA;
+                font-weight: bold;
+                text-align: right;
+            }
+            
+            #rigor-number {
+                color: #000;
+                cursor: hand;
+            }   
+
+            .currentChar {
+                border-bottom: 4px solid #f78d1d;
+            }
+            
+            .errorChar {
+                color: #FF0000;
+            }
+            
+            .goodChar {
+                color: #AAAAAA;
+            	text-shadow: 0px 1px 1px #FFF, 0px 2px 2px #FFF;
+            }
+
+            .modal-dialog {
+                padding-top: 8%;
+            }
+
+            @media screen and (max-width: 900px) {
+                #layout,
+                #level-chars,
+                #next-level,
+                .keys-hit,
+                .keyboard-layout,
+                #timer-wrapper,
+                #title,
+                #rigor,
+                #stats {
+                    display: none !important;
+                }
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id='container'>
+            <div id='layout'>
+            </div>
+
+            <div id='level-chars'>
+            </div>
+
+            <div id='next-level'>
+            </div>
+
+            <div id='word'>
+            </div>
+
+            <!-- GitHub Pages need the `.` to indicate the current directory. -->
+            <!-- https://www.elharony.com/images-not-displaying-in-github-pages/ -->
+            <div class="keyboard-layout" data-layout="colemak">
+                <img src="./assets/img/colemak.png" alt="colemak.png">
+            </div>
+            <div class="keyboard-layout" data-layout="colemak-dh">
+                <img src="./assets/img/colemak-dh.png" alt="colemak-dh.png">
+            </div>
+            <div class="keyboard-layout" data-layout="colemak-dhk">
+                <img src="./assets/img/colemak-dhk.png" alt="colemak-dhk.png">
+            </div>
+            <div class="keyboard-layout" data-layout="colemak-dh-matrix">
+                <img src="./assets/img/colemak-dh-matrix.png" alt="colemak-dh-matrix.png">
+            </div>
+            <div class="keyboard-layout" data-layout="colemak-dhk-matrix">
+                <img src="./assets/img/colemak-dhk-matrix.png" alt="colemak-dhk-matrix.png">
+            </div>
+            <div class="keyboard-layout" data-layout="qwerty">
+                <img src="./assets/img/qwerty.png" alt="qwerty.png">
+            </div>
+            <div class="keyboard-layout" data-layout="isrt-matrix">
+                <img src="./assets/img/isrt-matrix.png" alt="isrt-matrix.png">
+            </div>
+
+            <div id="timer-wrapper">
+                <div class="timer">
+                </div>
+            </div>
+
+            <div id='title'>
+                <a href="https://github.com/ranelpadon/keyzen-colemak-dh">Keyzen-Colemak-DH</a>
+            </div>
+
+            <div id='rigor'>
+            </div>
+
+            <div id="stats">
+            </div>
+
+            <!-- Modal for the custom text. -->
+            <div id="custom-chars-modal" class="modal fade" role="dialog">
+                <div class="modal-dialog modal-md">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        </div>
+                        <div class="modal-body">
+                            <p>Put the custom characters here (e.g. specific letters/capitalization, punctuations, or numbers).</p>
+                            <textarea id="custom-chars-modal--text-area" rows="5" cols="75">
+                            </textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" id="custom-chars-modal--ok-button">OK</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
